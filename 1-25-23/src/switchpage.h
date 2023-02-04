@@ -1,6 +1,6 @@
 #include <lvgl.h>
 #include <eventhandler.h>
-//#include "sht.h"
+#include "sht.h"
 
 
 
@@ -79,7 +79,7 @@ void create_tabview(void) {
     lv_obj_set_size(btn2, 130, 80);
     lv_obj_add_style(btn2, &style_shadow, 0);
     lv_obj_add_flag(btn2, LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_add_event_cb(btn2, toggle_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(btn2, toggle_event_handler2, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(btn2, btn2_onoff, LV_EVENT_ALL, NULL);
 
     label = lv_label_create(btn2);
@@ -92,7 +92,7 @@ void create_tabview(void) {
     lv_obj_set_size(btn3, 130, 80);
     lv_obj_add_style(btn3, &style_shadow, 0);
     lv_obj_add_flag(btn3, LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_add_event_cb(btn3, toggle_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(btn3, toggle_event_handler3, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(btn3, btn3_onoff, LV_EVENT_ALL, NULL);
 
     label = lv_label_create(btn3);
@@ -117,7 +117,7 @@ void create_tabview(void) {
     lv_obj_set_size(btn4, 130, 80);
     lv_obj_add_style(btn4, &style_shadow, 0);
     lv_obj_add_flag(btn4, LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_add_event_cb(btn4, toggle_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(btn4, toggle_event_handler4, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(btn4, btn4_onoff, LV_EVENT_ALL, NULL);
 
     label = lv_label_create(btn4);
@@ -130,7 +130,7 @@ void create_tabview(void) {
     lv_obj_set_size(btn5, 130, 80);
     lv_obj_add_style(btn5, &style_shadow, 0);
     lv_obj_add_flag(btn5, LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_add_event_cb(btn5, toggle_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(btn5, toggle_event_handler5, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(btn5, btn5_onoff, LV_EVENT_ALL, NULL);
 
     label = lv_label_create(btn5);
@@ -150,11 +150,11 @@ void create_tabview(void) {
 
         // button 6 tv 
     lv_obj_t *btn6 = lv_btn_create(tab3);
-    lv_obj_set_pos(btn6, 110, 30);
+    lv_obj_set_pos(btn6, 25, 30);
     lv_obj_set_size(btn6, 130, 80);
     lv_obj_add_style(btn6, &style_shadow, 0);
     lv_obj_add_flag(btn6, LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_add_event_cb(btn6, toggle_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(btn6, toggle_event_handler6, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(btn6, btn6_onoff, LV_EVENT_ALL, NULL);
 
     label = lv_label_create(btn6);
@@ -164,17 +164,30 @@ void create_tabview(void) {
 
         // button 7 fridge 
     lv_obj_t *btn7 = lv_btn_create(tab3);
-    lv_obj_set_pos(btn7, 110, 180);
+    lv_obj_set_pos(btn7, 205, 30);
     lv_obj_set_size(btn7, 130, 80);
     lv_obj_add_style(btn7, &style_shadow, 0);
     lv_obj_add_flag(btn7, LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_add_event_cb(btn7, toggle_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(btn7, toggle_event_handler7, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(btn7, btn7_onoff, LV_EVENT_ALL, NULL);
 
     label = lv_label_create(btn7);
     lv_label_set_text(label, "Fridge");
     lv_obj_center(label);
 
+
+        // button 8 main relay 
+    lv_obj_t *btn8 = lv_btn_create(tab3);
+    lv_obj_set_pos(btn8, 110, 180);
+    lv_obj_set_size(btn8, 130, 80);
+    lv_obj_add_style(btn8, &style_shadow, 0);
+    lv_obj_add_flag(btn8, LV_OBJ_FLAG_CHECKABLE);
+    lv_obj_add_event_cb(btn8, toggle_event_handler8, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(btn8, btn8_onoff, LV_EVENT_ALL, NULL);
+
+    label = lv_label_create(btn8);
+    lv_label_set_text(label, "Main Realy");
+    lv_obj_center(label);
 
 
 
@@ -233,14 +246,29 @@ void create_tabview(void) {
 
 
 //tab5
+    
+static char buffer[32]; //for updating the temp sensor label.
+double temp;
+lv_obj_t * tempvalue; //label
 
+
+tempvalue = lv_label_create(tab5);
+lv_obj_align(tempvalue, LV_ALIGN_CENTER, 0, 0);
+
+temp = sht.getTemperature();
+snprintf(buffer, 32, "Temp: %.2f", temp);
+
+
+lv_label_set_text_fmt(tempvalue, buffer);
 
 
     /*Create the main label*/
-    label = lv_label_create(tab5);
-    lv_label_set_text_fmt(label, "Grey Tank Level: %s", (greystate == HIGH) ? "FULL" : "LOW");
+    //label = lv_label_create(tab5);
+    //lv_label_set_text_fmt(label, "Grey Tank Level: %s", (greystate == HIGH) ? "FULL" : "LOW");
+   // lv_label_set_text_fmt(label, "Temp = %f", shttemp);
 
-    lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
+
+    //lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
 
 
 

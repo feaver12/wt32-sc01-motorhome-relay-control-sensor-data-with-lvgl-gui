@@ -1,67 +1,54 @@
 #include <Wire.h>
-#include "ClosedCube_SHT31D.h"
+#include "SHT85.h"
 
-ClosedCube_SHT31D sht3xd;
+#define SHT85_ADDRESS       0x44
 
+uint32_t start;
+uint32_t stop;
 
-unsigned long lastRead = 0;
-unsigned long interval = 10000; // read temperature every 10 seconds
+uint16_t count = 0;
+uint32_t last = 0;
 
-void printResult(String text, SHT31D result);
+SHT85 sht;
 
-void printtemp() {
-    void printResult(String text, SHT31D result);
-}
+//float shttemp = sht.getTemperature();
 
-
-void read_sht() {
-    unsigned long currentTime = millis();
-    if (currentTime - lastRead >= interval) {
-        SHT31D result = sht3xd.periodicFetchData();
-        if (result.error == SHT3XD_NO_ERROR) {
-            Serial.print("Periodic Mode: T=");
-            Serial.print(result.t);
-            Serial.print("C, RH=");
-            Serial.print(result.rh);
-            Serial.println("%");
-        } else {
-            Serial.print("Periodic Mode: [ERROR] Code #");
-            Serial.println(result.error);
-        }
-        lastRead = currentTime;
-    }
-}
-
-
-
-
-void sht()
+void read_sht()
 {
+  start = micros();
+  sht.read();         // default = true/fast       slow = false
+  stop = micros();
 
-	Wire.begin(18, 19);
-
-	Serial.begin(115200);
-	Serial.println("ClosedCube SHT3X-D Single Shot Mode Example");
-	Serial.println("supports SHT30-D, SHT31-D and SHT35-D");
-
-	sht3xd.begin(0x44); // I2C address: 0x44 or 0x45
-
-	Serial.print("Serial #");
-	Serial.println(sht3xd.readSerialNumber());
+  if (millis() - last >= 5000)
+  {
+  Serial.print("Temp:  ");
+  Serial.print(sht.getTemperature(), 1);
+  Serial.print("Humidity:  ");
+  Serial.println(sht.getHumidity(), 1);
+ // if (millis() - last >= 5000)
+ // {
+    last = millis();
+    count = 0;
+  }
 }
 
 
-void printResult(String text, SHT31D result) {
-	if (result.error == SHT3XD_NO_ERROR) {
-		Serial.print(text);
-		Serial.print(": T=");
-		Serial.print(result.t);
-		Serial.print("C, RH=");
-		Serial.print(result.rh);
-		Serial.println("%");
-	} else {
-		Serial.print(text);
-		Serial.print(": [ERROR] Code #");
-		Serial.println(result.error);
-	}
+
+
+void sht_setup()
+{
+  Serial.begin(115200);
+  //  Serial.println(__FILE__);
+  //  Serial.print("SHT_LIB_VERSION: \t");
+  //  Serial.println(SHT_LIB_VERSION);
+
+  Wire.begin(18, 19);
+  sht.begin(SHT85_ADDRESS);
+  Wire.setClock(100000);
+
+  //  uint16_t stat = sht.readStatus();
+  //  Serial.print(stat, HEX);
+  //  Serial.println();
+  Serial.println("count\t time\t temp\t hum");
 }
+

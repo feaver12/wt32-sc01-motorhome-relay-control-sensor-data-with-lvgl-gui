@@ -13,28 +13,24 @@
 #include "lv_conf.h"
 #include "displayhandler.h"
 #include "switchpage.h"
-#include <sht.h>
-#include <mcp.h>
+//#include <sht.h>
 
 
 
 void setup(void)
 {
-
   enablepinmode();
   setupdisplay();
-  //button();
   create_tabview();
-  sht();
-  //mcpsetup();
+  sht_setup();
+  mcpsetup();
 }
  
  
 void loop(void)
 { 
-
   lv_timer_handler(); /* let the GUI do its work */
+  lv_task_handler();
   delay(5); 
   read_sht();
-  //mcploop();
  }
